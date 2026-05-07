@@ -751,14 +751,11 @@ function showToast(msg, type='error') {
 // ══════════════════════════════════════
 async function init() {
   try {
-    const data = await sbGet('profesionales?select=*&limit=1');
-    if (data && data[0]) {
-      PROFESIONAL_ID = data[0].id;
-      await loadTurnosMes();
-    }
+    // ID fijo del Dr. José María Jiménez
+    PROFESIONAL_ID = '44c0a06d-5b6b-4756-a1bb-5942302ae6c2';
+    await loadTurnosMes();
   } catch(e) {
     console.warn('Supabase no disponible, modo demo activo');
-    // Calendario sigue funcionando en modo demo
   }
 }
  
