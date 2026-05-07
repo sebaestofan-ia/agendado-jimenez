@@ -628,31 +628,54 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
       <div class="config-section">
         <span class="config-label">Datos del profesional</span>
         <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow-sm)">
+ 
           <div class="form-group">
-            <label class="form-label">Nombre completo</label>
+            <label class="form-label">Nombre completo <span style="color:var(--rose)">*</span></label>
             <input class="form-input" id="cfg-nombre" type="text" placeholder="Dr. José María Jiménez">
           </div>
+ 
           <div class="form-group">
-            <label class="form-label">Especialidad</label>
-            <input class="form-input" id="cfg-especialidad" type="text" placeholder="Ortodoncia / Maxilofacial">
+            <label class="form-label">Título <span style="color:var(--rose)">*</span></label>
+            <input class="form-input" id="cfg-titulo" type="text" placeholder="Odontólogo / Médico / Lic. en...">
           </div>
+ 
           <div class="form-group">
-            <label class="form-label">Consultorio</label>
-            <input class="form-input" id="cfg-consultorio" type="text" placeholder="Clínica CEMIJ">
+            <label class="form-label">Especialidad <span style="color:var(--rose)">*</span></label>
+            <input class="form-input" id="cfg-especialidad" type="text" placeholder="Ortodoncia">
           </div>
+ 
           <div class="form-group">
-            <label class="form-label">Dirección</label>
+            <label class="form-label">Matrícula <span style="color:var(--text-dim);font-style:italic;font-weight:400">(opcional)</span></label>
+            <input class="form-input" id="cfg-matricula" type="text" placeholder="MP 2562">
+          </div>
+ 
+          <div class="form-group">
+            <label class="form-label">Consultorio / Estudio <span style="color:var(--text-dim);font-style:italic;font-weight:400">(opcional)</span></label>
+            <input class="form-input" id="cfg-consultorio" type="text" placeholder="Consultorios LIBERTAD">
+          </div>
+ 
+          <div class="form-group">
+            <label class="form-label">Dirección <span style="color:var(--rose)">*</span></label>
             <input class="form-input" id="cfg-direccion" type="text" placeholder="Libertad 122, San Miguel de Tucumán">
           </div>
+ 
           <div class="form-group">
-            <label class="form-label">WhatsApp / Teléfono</label>
-            <input class="form-input" id="cfg-telefono" type="tel" placeholder="+5493834007226">
+            <label class="form-label">WhatsApp / Teléfono <span style="color:var(--rose)">*</span></label>
+            <input class="form-input" id="cfg-telefono" type="tel" placeholder="+54 9 383 400 7226">
           </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">Email</label>
+ 
+          <div class="form-group">
+            <label class="form-label">Email <span style="color:var(--rose)">*</span></label>
             <input class="form-input" id="cfg-email" type="email" placeholder="jose_j7@hotmail.com">
           </div>
+ 
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Otro <span style="color:var(--text-dim);font-style:italic;font-weight:400">(opcional)</span></label>
+            <input class="form-input" id="cfg-otro" type="text" placeholder="UNT · 15 años de experiencia...">
+          </div>
+ 
         </div>
+      </div>      </div>
       </div>
  
       <!-- HORARIOS EDITABLES -->
@@ -1368,11 +1391,14 @@ async function loadConfig() {
     const p = data[0];
     const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
     setVal('cfg-nombre',       p.nombre);
+    setVal('cfg-titulo',       p.titulo);
     setVal('cfg-especialidad', p.especialidad);
+    setVal('cfg-matricula',    p.matricula);
     setVal('cfg-consultorio',  p.consultorio);
     setVal('cfg-direccion',    p.direccion);
     setVal('cfg-telefono',     p.telefono);
     setVal('cfg-email',        p.email);
+    setVal('cfg-otro',         p.otro);
     if (p.horario_inicio) setVal('cfg-hora-inicio', p.horario_inicio.substring(0,5));
     if (p.horario_fin)    setVal('cfg-hora-fin',    p.horario_fin.substring(0,5));
     if (p.dias_atencion && Array.isArray(p.dias_atencion)) {
@@ -1391,6 +1417,11 @@ async function guardarConfig() {
  
   const dias = [...document.querySelectorAll('.dia-btn.active')].map(b => b.dataset.dia);
   const nombre = document.getElementById('cfg-nombre').value.trim();
+  const titulo = document.getElementById('cfg-titulo') ? document.getElementById('cfg-titulo').value.trim() : '';
+  const especialidad = document.getElementById('cfg-especialidad').value.trim();
+  const matricula = document.getElementById('cfg-matricula') ? document.getElementById('cfg-matricula').value.trim() : '';
+  const otro = document.getElementById('cfg-otro') ? document.getElementById('cfg-otro').value.trim() : '';
+ 
   if (!nombre) {
     showToast('El nombre no puede estar vacío.');
     btn.disabled = false; btn.textContent = 'Guardar cambios'; return;
@@ -1398,11 +1429,14 @@ async function guardarConfig() {
  
   const payload = {
     nombre,
-    especialidad:  document.getElementById('cfg-especialidad').value.trim(),
+    titulo,
+    especialidad,
+    matricula,
     consultorio:   document.getElementById('cfg-consultorio').value.trim(),
     direccion:     document.getElementById('cfg-direccion').value.trim(),
     telefono:      document.getElementById('cfg-telefono').value.trim(),
     email:         document.getElementById('cfg-email').value.trim(),
+    otro,
     horario_inicio: document.getElementById('cfg-hora-inicio').value + ':00',
     horario_fin:    document.getElementById('cfg-hora-fin').value + ':00',
     dias_atencion:  dias,
@@ -1411,6 +1445,11 @@ async function guardarConfig() {
   try {
     await sbPatch(`profesionales?id=eq.${PROFESIONAL_ID}`, payload);
     showToast('✓ Cambios guardados correctamente', 'info');
+    // Actualizar chips del hero en tiempo real
+    actualizarChipsHero(especialidad, matricula, payload.consultorio, otro);
+    // Actualizar nombre en hero
+    const heroName = document.querySelector('.hero-name');
+    if (heroName) heroName.textContent = nombre;
   } catch(e) {
     showToast('Error al guardar. Intentá de nuevo.');
     console.error(e);
@@ -1418,6 +1457,19 @@ async function guardarConfig() {
  
   btn.disabled = false;
   btn.textContent = 'Guardar cambios';
+}
+ 
+function actualizarChipsHero(especialidad, matricula, consultorio, otro) {
+  const wrap = document.getElementById('hero-spec-chips');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const chips = [especialidad, matricula, consultorio, otro].filter(c => c && c.trim());
+  chips.forEach(c => {
+    const span = document.createElement('span');
+    span.className = 'spec-chip';
+    span.textContent = c;
+    wrap.appendChild(span);
+  });
 }
  
  
