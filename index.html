@@ -361,7 +361,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
     </div>
     <h1 class="hero-name">Dr. José María Jiménez</h1>
     <div class="hero-spec" id="hero-spec-chips">
-      <span class="spec-chip">Ortodoncia</span>
+      <span class="spec-chip">Ortodoncia Dedicación Exclusiva</span>
       <span class="spec-chip">MP 2562</span>
       <span class="spec-chip">Consultorios LIBERTAD</span>
     </div>
@@ -458,11 +458,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
             <select class="form-select" id="inp-motivo">
               <option value="">Seleccioná el motivo...</option>
               <option>Consulta inicial / Evaluación</option>
-              <option>Cirugía programada</option>
+              <option>Inicio tratamiento</option>
+              <option>Instalación aparatología</option>
+              <option>Ajuste aparatología</option>
+              <option>Retiro aparatología</option>
+              <option>Instalación contención</option>
+              <option>Cirugía</option>
               <option>Control postoperatorio</option>
               <option>Urgencia / Dolor</option>
-              <option>Extracción compleja</option>
-              <option>Implante</option>
               <option>Otro</option>
             </select>
           </div>
@@ -517,16 +520,16 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
     <p class="sec-sub">Clínica Consultorios LIBERTAD · Tucumán</p>
     <div class="info-block">
       <h3>Dr. José María Jiménez</h3>
-      <p>Cirujano Dentomaxilar y Maxilofacial egresado de la Universidad Nacional de Tucumán, con más de 15 años de experiencia clínica. Especialista en cirugías complejas de boca, maxilares y estructuras faciales.</p>
+      <p>Odontólogo egresado de la Universidad Nacional de Tucumán (2010). Especialista en Ortodoncia, egresado de la Universidad Maimónides (2022). Dedicación exclusiva a ortodoncia.</p>
     </div>
     <div class="info-block">
       <h3>Especialidades</h3>
       <div style="margin-top:6px">
-        <span class="service-tag">🦷 Odontología General</span>
         <span class="service-tag">🦴 Ortodoncia</span>
-        <span class="service-tag">✨ Blanqueamiento</span>
-        <span class="service-tag">🔬 Diagnóstico Oclusal</span>
         <span class="service-tag">👶 Ortodoncia Infantil</span>
+        <span class="service-tag">🔬 Diagnóstico Oclusal</span>
+        <span class="service-tag">📐 Aparatología fija y removible</span>
+        <span class="service-tag">✨ Contención</span>
         <span class="service-tag">🚨 Urgencias</span>
       </div>
     </div>
@@ -583,9 +586,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
       <!-- Header mes -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <div style="display:flex;align-items:center;gap:8px">
-          <button class="day-nav-btn" onclick="changeMonth(-1)">‹</button>
+          <button class="day-nav-btn" onclick="changePanelMonth(-1)">‹</button>
           <span style="font-family:'Lora',serif;font-size:17px;color:var(--text);font-weight:600" id="panel-month-label"></span>
-          <button class="day-nav-btn" onclick="changeMonth(1)">›</button>
+          <button class="day-nav-btn" onclick="changePanelMonth(1)">›</button>
         </div>
         <div style="display:flex;gap:6px">
           <button class="day-nav-btn" onclick="goToToday()" style="font-size:10px;font-weight:700;padding:0 10px;border-radius:8px;width:auto;white-space:nowrap">Hoy</button>
@@ -703,6 +706,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
       <div class="config-section">
         <span class="config-label">Horario de atención</span>
         <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow-sm)">
+          <!-- Turno mañana -->
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">🌅 Turno mañana</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
             <div>
               <label class="form-label">Desde</label>
@@ -710,7 +715,22 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
             </div>
             <div>
               <label class="form-label">Hasta</label>
-              <input class="form-input" id="cfg-hora-fin" type="time" value="20:00">
+              <input class="form-input" id="cfg-hora-fin" type="time" value="13:00">
+            </div>
+          </div>
+          <!-- Turno tarde -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div class="toggle" id="toggle-tarde" onclick="toggleTarde(this)" style="flex-shrink:0"></div>
+            <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);">🌆 Turno tarde (opcional)</span>
+          </div>
+          <div id="wrap-tarde" style="display:none;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+            <div>
+              <label class="form-label">Desde</label>
+              <input class="form-input" id="cfg-hora-inicio2" type="time" value="15:30">
+            </div>
+            <div>
+              <label class="form-label">Hasta</label>
+              <input class="form-input" id="cfg-hora-fin2" type="time" value="20:00">
             </div>
           </div>
           <div>
@@ -731,9 +751,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
       <!-- NOTIFICACIONES -->
       <div class="config-section">
         <span class="config-label">Notificaciones</span>
-        <div class="config-row"><span class="config-row-label">Recordatorio 24hs</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-        <div class="config-row"><span class="config-row-label">Nueva reserva</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-        <div class="config-row"><span class="config-row-label">Resumen diario</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        <div class="config-row"><span class="config-row-label">Recordatorio 24hs</span><div class="toggle on" id="tog-recordatorio" onclick="toggleNotif(this,'recordatorio')"></div></div>
+        <div class="config-row"><span class="config-row-label">Nueva reserva</span><div class="toggle on" id="tog-nueva-reserva" onclick="toggleNotif(this,'nueva-reserva')"></div></div>
+        <div class="config-row"><span class="config-row-label">Resumen diario</span><div class="toggle" id="tog-resumen-diario" onclick="toggleNotif(this,'resumen-diario')"></div></div>
+        <div class="config-row">
+          <div><span class="config-row-label">Bloquear feriados nacionales</span><div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Argentina 2025-2026 incluidos automáticamente</div></div>
+          <div class="toggle on" id="tog-feriados" onclick="toggleFeriados(this)"></div>
+        </div>
       </div>
 
       <!-- GUARDAR -->
@@ -938,10 +962,14 @@ const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Ag
 const dayNames = ['D','L','M','M','J','V','S'];
 
 function getAvailDays() {
+  const diasMap = { 0:'dom', 1:'lun', 2:'mar', 3:'mie', 4:'jue', 5:'vie', 6:'sab' };
+  let diasActivos;
+  try { diasActivos = JSON.parse(localStorage.getItem('agendado_dias_atencion') || '["lun","mar","mie","jue","vie"]'); }
+  catch(e) { diasActivos = ['lun','mar','mie','jue','vie']; }
   const s = new Set(), dim = new Date(curYear, curMonth+1, 0).getDate();
   for (let d = 1; d <= dim; d++) {
     const dt = new Date(curYear, curMonth, d), dow = dt.getDay();
-    if (dow >= 1 && dow <= 5) s.add(d);
+    if (diasActivos.includes(diasMap[dow])) s.add(d);
   }
   return s;
 }
@@ -997,21 +1025,24 @@ function changeMonth(dir) {
 function generateSlots(dur) {
   const slots = [];
 
-  // Turno mañana: 08:30 a 11:30
-  let h = 8, m = 30;
-  while (h < 11 || (h === 11 && m <= 30)) {
-    slots.push(String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'));
-    m += dur;
-    if (m >= 60) { h++; m -= 60; }
+  // Leer horario desde config guardada o usar defaults
+  const hi1 = (localStorage.getItem('agendado_hora_inicio') || '08:30').split(':');
+  const hf1 = (localStorage.getItem('agendado_hora_fin')    || '13:00').split(':');
+  const tardeOn = localStorage.getItem('agendado_turno_tarde') === '1';
+  const hi2 = (localStorage.getItem('agendado_hora_inicio2') || '15:30').split(':');
+  const hf2 = (localStorage.getItem('agendado_hora_fin2')    || '20:00').split(':');
+
+  function addRange(hIni, mIni, hFin, mFin) {
+    let h = hIni, m = mIni;
+    while (h < hFin || (h === hFin && m < mFin)) {
+      slots.push(String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'));
+      m += dur;
+      if (m >= 60) { h++; m -= 60; }
+    }
   }
 
-  // Turno tarde: 15:30 a 20:00
-  h = 15; m = 30;
-  while (h < 20) {
-    slots.push(String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'));
-    m += dur;
-    if (m >= 60) { h++; m -= 60; }
-  }
+  addRange(parseInt(hi1[0]), parseInt(hi1[1]), parseInt(hf1[0]), parseInt(hf1[1]));
+  if (tardeOn) addRange(parseInt(hi2[0]), parseInt(hi2[1]), parseInt(hf2[0]), parseInt(hf2[1]));
 
   return slots;
 }
@@ -1104,7 +1135,7 @@ function getBloqueos() {
 function saveBloqueos(arr) { localStorage.setItem('agendado_bloqueos', JSON.stringify(arr)); }
 
 function esDiaBloqueado(fechaStr) {
-  return getBloqueos().some(b => fechaStr >= b.desde && fechaStr <= b.hasta);
+  return esFeriado(fechaStr) || getBloqueos().some(b => fechaStr >= b.desde && fechaStr <= b.hasta);
 }
 
 function renderBloqueos() {
@@ -1366,7 +1397,7 @@ let turnosPorDia = {};
 
 const panelMonthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-function changeMonth(dir) {
+function changePanelMonth(dir) {
   panelMonth += dir;
   if (panelMonth < 0) { panelMonth = 11; panelYear--; }
   if (panelMonth > 11) { panelMonth = 0; panelYear++; }
@@ -1645,6 +1676,17 @@ async function guardarConfig() {
     btn.disabled = false; btn.textContent = 'Guardar cambios'; return;
   }
 
+  // Guardar horario en localStorage para generateSlots
+  const hi1val = document.getElementById('cfg-hora-inicio').value;
+  const hf1val = document.getElementById('cfg-hora-fin').value;
+  const tardeSaved = document.getElementById('toggle-tarde') && document.getElementById('toggle-tarde').classList.contains('on');
+  localStorage.setItem('agendado_hora_inicio', hi1val);
+  localStorage.setItem('agendado_hora_fin',    hf1val);
+  if (tardeSaved) {
+    localStorage.setItem('agendado_hora_inicio2', document.getElementById('cfg-hora-inicio2').value);
+    localStorage.setItem('agendado_hora_fin2',    document.getElementById('cfg-hora-fin2').value);
+  }
+
   const payload = {
     nombre,
     titulo,
@@ -1655,14 +1697,17 @@ async function guardarConfig() {
     telefono:      document.getElementById('cfg-telefono').value.trim(),
     email:         document.getElementById('cfg-email').value.trim(),
     otro,
-    horario_inicio: document.getElementById('cfg-hora-inicio').value + ':00',
-    horario_fin:    document.getElementById('cfg-hora-fin').value + ':00',
+    horario_inicio: hi1val + ':00',
+    horario_fin:    hf1val + ':00',
     dias_atencion:  dias,
   };
 
   try {
     await sbPatch(`profesionales?id=eq.${PROFESIONAL_ID}`, payload);
     showToast('✓ Cambios guardados correctamente', 'info');
+    // Persistir dias de atencion para calendario paciente
+    localStorage.setItem('agendado_dias_atencion', JSON.stringify(dias));
+    renderCalendar();
     // Actualizar chips del hero en tiempo real
     actualizarChipsHero(especialidad, matricula, payload.consultorio, otro);
     // Actualizar nombre en hero
@@ -1765,15 +1810,13 @@ async function guardarNuevoTurno() {
       await loadPanelStats();
       showToast('✓ Turno guardado correctamente', 'info');
 
-      // Abrir WhatsApp
+      // Abrir WhatsApp automáticamente
       var telLimpio = tel.replace(/[^0-9]/g, '');
-      var waMsg = 'Hola ' + nombre + ', su turno con el Dr. Jimenez esta confirmado. Horario: ' + hora + ' hs (' + dur + ' min). Clinica CEMIJ, Jujuy 173, Tucuman. Le recordaremos 24hs antes.';
+      if (!telLimpio.startsWith('54')) telLimpio = '54' + telLimpio;
+      var fechaLabel = (panelSelDate || new Date()).toLocaleDateString('es-AR', { weekday:'long', day:'numeric', month:'long' });
+      var waMsg = '¡Hola ' + nombre + '! Tu turno con el Dr. Jiménez quedó confirmado.\n\n📅 ' + fechaLabel + '\n⏰ ' + hora + ' hs (' + dur + ' min)\n📍 Consultorios LIBERTAD, Libertad 122, Tucumán\n\nTe recordaremos 24hs antes. ¡Nos vemos!';
       var waUrl = 'https://wa.me/' + telLimpio + '?text=' + encodeURIComponent(waMsg);
-      setTimeout(function() {
-        if (confirm('Enviar confirmacion por WhatsApp al paciente?')) {
-          window.open(waUrl, '_blank');
-        }
-      }, 600);
+      setTimeout(function() { window.open(waUrl, '_blank'); }, 800);
 
     } else {
       throw new Error('Error al guardar');
@@ -1785,6 +1828,79 @@ async function guardarNuevoTurno() {
 
   btn.disabled = false;
   btn.textContent = 'Guardar turno →';
+}
+
+
+// ══════════════════════════════════════
+// TOGGLE TARDE
+// ══════════════════════════════════════
+function toggleTarde(el) {
+  el.classList.toggle('on');
+  const wrap = document.getElementById('wrap-tarde');
+  const isOn = el.classList.contains('on');
+  wrap.style.display = isOn ? 'grid' : 'none';
+  localStorage.setItem('agendado_turno_tarde', isOn ? '1' : '0');
+}
+
+function initToggleTarde() {
+  const saved = localStorage.getItem('agendado_turno_tarde');
+  if (saved === '1') {
+    const tog = document.getElementById('toggle-tarde');
+    const wrap = document.getElementById('wrap-tarde');
+    if (tog) tog.classList.add('on');
+    if (wrap) wrap.style.display = 'grid';
+  }
+}
+
+// ══════════════════════════════════════
+// TOGGLES NOTIFICACIONES
+// ══════════════════════════════════════
+function toggleNotif(el, key) {
+  el.classList.toggle('on');
+  const notifs = JSON.parse(localStorage.getItem('agendado_notifs') || '{}');
+  notifs[key] = el.classList.contains('on');
+  localStorage.setItem('agendado_notifs', JSON.stringify(notifs));
+}
+
+function initTogglesNotif() {
+  const notifs = JSON.parse(localStorage.getItem('agendado_notifs') || '{}');
+  const defaults = { 'recordatorio': true, 'nueva-reserva': true, 'resumen-diario': false };
+  Object.keys(defaults).forEach(key => {
+    const val = notifs[key] !== undefined ? notifs[key] : defaults[key];
+    const el = document.getElementById('tog-' + key);
+    if (el) { if (val) el.classList.add('on'); else el.classList.remove('on'); }
+  });
+}
+
+// ══════════════════════════════════════
+// FERIADOS ARGENTINA 2025-2026
+// ══════════════════════════════════════
+const FERIADOS_ARG = [
+  '2025-01-01','2025-03-03','2025-03-04','2025-03-24','2025-04-02',
+  '2025-04-18','2025-05-01','2025-05-25','2025-06-16','2025-06-20',
+  '2025-07-09','2025-08-17','2025-10-12','2025-11-20','2025-12-08','2025-12-25',
+  '2026-01-01','2026-02-16','2026-02-17','2026-03-24','2026-04-02',
+  '2026-04-03','2026-05-01','2026-05-25','2026-06-15','2026-06-20',
+  '2026-07-09','2026-08-17','2026-10-12','2026-11-20','2026-12-08','2026-12-25'
+];
+
+function esFeriado(fechaStr) {
+  const usarFeriados = localStorage.getItem('agendado_feriados') !== '0';
+  return usarFeriados && FERIADOS_ARG.includes(fechaStr);
+}
+
+
+
+function toggleFeriados(el) {
+  el.classList.toggle('on');
+  localStorage.setItem('agendado_feriados', el.classList.contains('on') ? '1' : '0');
+  renderCalendar();
+}
+
+function initFeriados() {
+  const val = localStorage.getItem('agendado_feriados');
+  const el = document.getElementById('tog-feriados');
+  if (el && val === '0') el.classList.remove('on');
 }
 
 // ══ INIT ══
@@ -1843,11 +1959,14 @@ if ('serviceWorker' in navigator) {
       <select class="form-select" id="nt-motivo">
         <option value="">Seleccioná el motivo...</option>
         <option>Consulta inicial / Evaluación</option>
-        <option>Cirugía programada</option>
+        <option>Inicio tratamiento</option>
+        <option>Instalación aparatología</option>
+        <option>Ajuste aparatología</option>
+        <option>Retiro aparatología</option>
+        <option>Instalación contención</option>
+        <option>Cirugía</option>
         <option>Control postoperatorio</option>
         <option>Urgencia / Dolor</option>
-        <option>Extracción compleja</option>
-        <option>Implante</option>
         <option>Otro</option>
       </select>
     </div>
