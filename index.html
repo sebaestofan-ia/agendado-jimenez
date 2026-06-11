@@ -226,8 +226,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
 .login-hint strong{color:var(--blue);}
 .login-error{font-size:12px;color:var(--rose);margin-top:8px;display:none;}
 
-.panel-header{background:var(--white);border-bottom:1px solid var(--border);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:100;}
-.panel-logo{font-family:'Lora',serif;font-size:20px;color:var(--blue);}
+.panel-header{background:rgba(255,255,255,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 18px;height:52px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(26,40,80,.06);position:sticky;top:0;z-index:200;}
+.panel-logo{display:inline-flex;align-items:center;gap:8px;text-decoration:none;}
 .btn-logout{font-size:11px;font-weight:600;color:var(--text-dim);background:var(--pearl);border:1px solid var(--border);padding:5px 12px;border-radius:20px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;}
 .btn-logout:hover{border-color:var(--rose);color:var(--rose);}
 
@@ -237,7 +237,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
 .ps-num{font-family:'Lora',serif;font-size:26px;color:var(--blue);line-height:1;}
 .ps-label{font-size:10px;color:var(--text-dim);margin-top:4px;}
 
-.panel-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:sticky;top:65px;z-index:90;box-shadow:var(--shadow-sm);}
+.panel-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:sticky;top:52px;z-index:90;box-shadow:var(--shadow-sm);}
 .panel-tabs::-webkit-scrollbar{display:none;}
 .ptab{flex-shrink:0;padding:14px 18px;font-size:12px;font-weight:600;letter-spacing:.3px;color:var(--text-dim);border:none;background:transparent;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;border-bottom:2px solid transparent;transition:all .2s;}
 .ptab.active{color:var(--blue);border-bottom-color:var(--blue);}
@@ -332,6 +332,38 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
 .cal-day.bloqueado{background:var(--rose-pale)!important;border-color:rgba(225,29,72,.25)!important;color:var(--rose)!important;pointer-events:none!important;}
 .slot.franja-bloqueada{color:var(--border2);text-decoration:line-through;pointer-events:none;opacity:.45;border-style:dashed;border-color:rgba(217,119,6,.3);}
 
+
+/* ── FRANJA ROWS ── */
+.franja-row {
+  background: var(--snow);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.franja-row-del {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: none; border: none;
+  color: var(--text-xdim); font-size: 14px;
+  cursor: pointer; padding: 2px 6px;
+  border-radius: 6px; line-height: 1;
+}
+.franja-row-del:hover { color: var(--rose); background: var(--rose-pale); }
+
+
+/* ── DÍAS ESPECIALES ── */
+.dias-esp-item{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;position:relative;}
+.dias-esp-day{min-width:38px;height:38px;border-radius:8px;background:var(--blue-pale);border:1px solid rgba(26,79,138,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
+.dias-esp-info{flex:1;}
+.dias-esp-prof{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.dias-esp-spec{font-size:11px;color:var(--text-dim);}
+.dias-esp-note{font-size:11px;color:var(--text-mid);margin-top:3px;font-style:italic;}
+.dias-esp-del{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text-xdim);font-size:14px;cursor:pointer;padding:2px 6px;border-radius:6px;}
+.dias-esp-del:hover{color:var(--rose);background:var(--rose-pale);}
+.dias-esp-empty{font-size:12px;color:var(--text-dim);text-align:center;padding:16px;font-style:italic;}
+
 </style>
 </head>
 <body>
@@ -349,6 +381,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
 
 <!-- ══════════════ VISTA PACIENTE ══════════════ -->
 <div id="view-patient" class="active">
+  <!-- HEADER LOGO PACIENTE -->
+  <div style="position:sticky;top:0;z-index:200;background:rgba(255,255,255,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 18px;height:52px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(26,40,80,.06);">
+    <a href="#" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;">
+      <svg width="28" height="28" viewBox="0 0 52 52" fill="none">
+        <circle cx="26" cy="26" r="22" stroke="#dde3ef" stroke-width="1.5" fill="none"/>
+        <path d="M 26 4 A 22 22 0 0 1 48 26" stroke="#1a4f8a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M 17 36 L 26 14 L 35 36" stroke="#1a2035" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M 20.5 28 L 31.5 28" stroke="#1a4f8a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="26" cy="14" r="3" fill="#1a4f8a"/>
+      </svg>
+      <span style="font-family:'Lora',serif;font-size:20px;font-weight:500;color:#1a2035;letter-spacing:-.5px;line-height:1;">Agend<em style="font-style:italic;color:#1a4f8a;">ado</em>.</span>
+    </a>
+    <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);background:var(--pearl);border:1px solid var(--border);padding:3px 10px;border-radius:20px;">Tu agenda online</span>
+  </div>
 
   <div class="hero">
     <div class="avatar-wrap" onclick="document.getElementById('avatar-input').click()">
@@ -481,8 +527,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
       <div class="success-detail" id="success-detail"></div>
       <div class="notif-badge">
         <span style="font-size:18px;flex-shrink:0">🔔</span>
-        <div class="nb-text">Recibirás un recordatorio 24 horas antes. El Dr. José Jiménez fue notificado automáticamente.</div>
+        <div class="nb-text">Tu turno quedó registrado. Agregalo a tu Google Calendar para no olvidarlo.</div>
       </div>
+      <a id="btn-wpp-confirm" href="#" target="_blank"
+        style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#25D366;color:white;border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 12px rgba(37,211,102,.3);">
+        <span style="font-size:18px;">💬</span> Enviar confirmación por WhatsApp
+      </a>
+      <!-- Botón Google Calendar -->
+      <a id="btn-gcal" href="#" target="_blank"
+        style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#4285F4;color:white;border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 12px rgba(66,133,244,.3);">
+        <span style="font-size:18px;">📅</span> Agregar a Google Calendar
+      </a>
       <button class="btn-secondary" onclick="resetFlow()">Reservar otro turno</button>
     </div>
   </div>
@@ -491,7 +546,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
   <div id="sec-contacto" class="section">
     <p class="sec-eyebrow">Contacto</p>
     <h2 class="sec-title">Encontranos</h2>
-    <p class="sec-sub">Clínica CEMIJ · Libertad 122, San Miguel de Tucumán</p>
+    <p class="sec-sub">Consultorios LIBERTAD · Libertad 122, San Miguel de Tucumán</p>
     <div class="card">
       <a class="contact-item" href="tel:+5493834007226">
         <div class="ci-icon">📞</div><div class="ci-info"><div class="ci-label">Teléfono</div><div class="ci-value">+54 9 383 400-7226</div></div><span class="ci-arrow">›</span>
@@ -564,10 +619,21 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
 
   <div id="panel-inner" style="display:none">
     <div class="panel-header">
-      <div class="panel-logo">Agendado.</div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span style="font-size:12px;color:var(--text-mid)">Dr. José Jiménez</span>
-        <button onclick="switchView()" style="font-size:11px;font-weight:600;color:var(--blue);background:var(--blue-pale);border:1px solid rgba(26,79,138,.15);padding:5px 12px;border-radius:20px;cursor:pointer;font-family:Plus Jakarta Sans,sans-serif;">👤 Vista paciente</button>
+      <!-- Logo unificado — igual que vista paciente -->
+      <a href="#" class="panel-logo">
+        <svg width="28" height="28" viewBox="0 0 52 52" fill="none">
+          <circle cx="26" cy="26" r="22" stroke="#dde3ef" stroke-width="1.5" fill="none"/>
+          <path d="M 26 4 A 22 22 0 0 1 48 26" stroke="#1a4f8a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M 17 36 L 26 14 L 35 36" stroke="#1a2035" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 20.5 28 L 31.5 28" stroke="#1a4f8a" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="26" cy="14" r="3" fill="#1a4f8a"/>
+        </svg>
+        <span style="font-family:'Lora',serif;font-size:20px;font-weight:500;color:#1a2035;letter-spacing:-.5px;line-height:1;">Agend<em style="font-style:italic;color:#1a4f8a;">ado</em>.</span>
+      </a>
+      <!-- Lado derecho panel médico -->
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;font-weight:600;color:var(--text-mid);display:none;" id="panel-prof-name">Dr. José Jiménez</span>
+        <button onclick="switchView()" style="font-size:11px;font-weight:600;color:var(--blue);background:var(--blue-pale);border:1px solid rgba(26,79,138,.15);padding:5px 12px;border-radius:20px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;white-space:nowrap;">👤 Vista paciente</button>
         <button class="btn-logout" onclick="doLogout()">Salir</button>
       </div>
     </div>
@@ -751,9 +817,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
       <!-- NOTIFICACIONES -->
       <div class="config-section">
         <span class="config-label">Notificaciones</span>
-        <div class="config-row"><span class="config-row-label">Recordatorio 24hs</span><div class="toggle on" id="tog-recordatorio" onclick="toggleNotif(this,'recordatorio')"></div></div>
+        <!-- Toggle recordatorio oculto - funcionalidad pendiente -->
         <div class="config-row"><span class="config-row-label">Nueva reserva</span><div class="toggle on" id="tog-nueva-reserva" onclick="toggleNotif(this,'nueva-reserva')"></div></div>
-        <div class="config-row"><span class="config-row-label">Resumen diario</span><div class="toggle" id="tog-resumen-diario" onclick="toggleNotif(this,'resumen-diario')"></div></div>
+        <!-- Toggle resumen diario oculto - funcionalidad pendiente -->
         <div class="config-row">
           <div><span class="config-row-label">Bloquear feriados nacionales</span><div style="font-size:11px;color:var(--text-dim);margin-top:2px;">Argentina 2025-2026 incluidos automáticamente</div></div>
           <div class="toggle on" id="tog-feriados" onclick="toggleFeriados(this)"></div>
@@ -764,6 +830,47 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
       <button class="btn-confirm" id="btn-guardar-config" onclick="guardarConfig()" style="margin-bottom:20px">
         Guardar cambios
       </button>
+
+      <!-- DÍAS ESPECIALES -->
+      <div class="config-section" id="config-dias-especiales">
+        <span class="config-label">👥 Días especiales / Profesional invitado</span>
+        <p style="font-size:12px;color:var(--text-mid);margin-bottom:12px;line-height:1.5;">Configurá días donde trabajás con otro profesional. Tus pacientes verán una nota al reservar ese día.</p>
+
+        <div id="dias-esp-list"></div>
+
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow-sm);">
+          <div style="font-size:11px;font-weight:700;color:var(--text-mid);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;">+ Agregar día especial</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div>
+              <label class="form-label">Día de la semana</label>
+              <select class="form-input" id="esp-dia" style="background:var(--snow);">
+                <option value="lun">Lunes</option>
+                <option value="mar">Martes</option>
+                <option value="mie">Miércoles</option>
+                <option value="jue">Jueves</option>
+                <option value="vie">Viernes</option>
+                <option value="sab">Sábado</option>
+                <option value="dom">Domingo</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Nombre del profesional</label>
+              <input class="form-input" id="esp-nombre" type="text" placeholder="Dr. Martínez">
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label class="form-label">Especialidad</label>
+            <input class="form-input" id="esp-especialidad" type="text" placeholder="Protesista · Implantes">
+          </div>
+          <div style="margin-bottom:12px;">
+            <label class="form-label">Nota para el paciente <span style="font-weight:400;font-style:italic;color:var(--text-dim)">(opcional)</span></label>
+            <input class="form-input" id="esp-nota" type="text" placeholder="Ideal para consultas de prótesis e implantes">
+          </div>
+          <button onclick="agregarDiaEspecial()" style="width:100%;padding:11px;background:var(--blue);color:white;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;">
+            Guardar día especial
+          </button>
+        </div>
+      </div>
 
       <!-- GESTIÓN DE DISPONIBILIDAD -->
       <div class="config-section">
@@ -805,26 +912,43 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
         <div class="disp-panel" id="disp-panel-franjas">
           <div id="disp-franjas-list" style="margin-bottom:12px;"></div>
           <div class="disp-form">
-            <div class="disp-form-title">+ Bloquear franja horaria</div>
+            <div class="disp-form-title">+ Bloquear franjas horarias</div>
+
+            <!-- Fecha común para todas las franjas del lote -->
             <div class="disp-mb">
               <label class="form-label">Fecha</label>
               <input class="form-input" id="franja-fecha" type="date">
             </div>
-            <div class="disp-grid-2">
-              <div>
-                <label class="form-label">Desde</label>
-                <input class="form-input" id="franja-desde" type="time" value="09:00">
-              </div>
-              <div>
-                <label class="form-label">Hasta</label>
-                <input class="form-input" id="franja-hasta" type="time" value="12:00">
+
+            <!-- Contenedor de franjas dinámicas -->
+            <div id="franjas-rows">
+              <!-- Fila 1 (siempre visible) -->
+              <div class="franja-row" id="franja-row-0">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <span style="font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;">Franja 1</span>
+                </div>
+                <div class="disp-grid-2" style="margin-bottom:8px;">
+                  <div>
+                    <label class="form-label">Desde</label>
+                    <input class="form-input franja-desde" type="time" value="09:00">
+                  </div>
+                  <div>
+                    <label class="form-label">Hasta</label>
+                    <input class="form-input franja-hasta" type="time" value="10:00">
+                  </div>
+                </div>
+                <div class="disp-mb">
+                  <input class="form-input franja-motivo" type="text" placeholder="Motivo (opcional)">
+                </div>
               </div>
             </div>
-            <div class="disp-mb">
-              <label class="form-label">Motivo <span style="font-weight:400;font-style:italic;color:var(--text-dim)">(opcional)</span></label>
-              <input class="form-input" id="franja-motivo" type="text" placeholder="Reunión, guardia, almuerzo...">
-            </div>
-            <button class="btn-bloquear-franja" onclick="agregarFranja()">⏰ Bloquear horario</button>
+
+            <!-- Botón agregar franja -->
+            <button onclick="addFranjaRow()" style="width:100%;padding:9px;border:1.5px dashed var(--border2);border-radius:10px;background:transparent;color:var(--text-mid);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:12px;transition:all .2s;" onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text-mid)'">
+              + Agregar otra franja
+            </button>
+
+            <button class="btn-bloquear-franja" onclick="agregarFranjas()">⏰ Bloquear franjas</button>
           </div>
         </div>
       </div>
@@ -1208,20 +1332,171 @@ function renderFranjas() {
     </div>`).join('');
 }
 
-function agregarFranja() {
-  const fecha  = document.getElementById('franja-fecha').value;
-  const desde  = document.getElementById('franja-desde').value;
-  const hasta  = document.getElementById('franja-hasta').value;
-  const motivo = document.getElementById('franja-motivo').value.trim();
-  if (!fecha || !desde || !hasta) { showToast('Completá fecha y horario.'); return; }
-  if (hasta <= desde) { showToast('El horario "hasta" debe ser mayor a "desde".'); return; }
+
+// ══════════════════════════════════════
+// DÍAS ESPECIALES
+// ══════════════════════════════════════
+const DIAS_LABELS = { lun:'LUN', mar:'MAR', mie:'MIÉ', jue:'JUE', vie:'VIE', sab:'SÁB', dom:'DOM' };
+const DIAS_FULL   = { lun:'Lunes', mar:'Martes', mie:'Miércoles', jue:'Jueves', vie:'Viernes', sab:'Sábado', dom:'Domingo' };
+
+function getDiasEspeciales() {
+  try { return JSON.parse(localStorage.getItem('agendado_dias_esp') || '[]'); } catch(e) { return []; }
+}
+function saveDiasEspeciales(arr) {
+  localStorage.setItem('agendado_dias_esp', JSON.stringify(arr));
+}
+
+function renderDiasEspeciales() {
+  const list = document.getElementById('dias-esp-list');
+  if (!list) return;
+  const arr = getDiasEspeciales();
+  if (!arr.length) {
+    list.innerHTML = '<div class="dias-esp-empty">Sin días especiales configurados.</div>';
+    return;
+  }
+  list.innerHTML = arr.map((d, i) => `
+    <div class="dias-esp-item">
+      <div class="dias-esp-day">${DIAS_LABELS[d.dia] || d.dia}</div>
+      <div class="dias-esp-info">
+        <div class="dias-esp-prof">${d.nombre} · <span style="font-weight:400;color:var(--text-mid)">${d.especialidad}</span></div>
+        ${d.nota ? `<div class="dias-esp-note">💬 ${d.nota}</div>` : ''}
+        <div style="font-size:10px;color:var(--text-dim);margin-top:2px;">Visible todos los ${DIAS_FULL[d.dia] || d.dia}</div>
+      </div>
+      <button class="dias-esp-del" onclick="eliminarDiaEspecial(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function agregarDiaEspecial() {
+  const dia    = document.getElementById('esp-dia').value;
+  const nombre = document.getElementById('esp-nombre').value.trim();
+  const esp    = document.getElementById('esp-especialidad').value.trim();
+  const nota   = document.getElementById('esp-nota').value.trim();
+  if (!nombre || !esp) { showToast('Completá nombre y especialidad.'); return; }
+  const arr = getDiasEspeciales();
+  arr.push({ dia, nombre, especialidad: esp, nota });
+  saveDiasEspeciales(arr);
+  document.getElementById('esp-nombre').value = '';
+  document.getElementById('esp-especialidad').value = '';
+  document.getElementById('esp-nota').value = '';
+  renderDiasEspeciales();
+  showToast('✓ Día especial guardado', 'info');
+}
+
+function eliminarDiaEspecial(idx) {
+  const arr = getDiasEspeciales();
+  arr.splice(idx, 1);
+  saveDiasEspeciales(arr);
+  renderDiasEspeciales();
+}
+
+function checkDiaEspecial(fecha) {
+  const dias  = ['dom','lun','mar','mie','jue','vie','sab'];
+  const dow   = dias[new Date(fecha + 'T12:00:00').getDay()];
+  const arr   = getDiasEspeciales();
+  const match = arr.find(d => d.dia === dow);
+  const notifEl = document.getElementById('dias-esp-notif');
+  if (notifEl) notifEl.remove();
+  if (match) {
+    const slotsWrap = document.getElementById('slots-wrap');
+    if (slotsWrap) {
+      const notif = document.createElement('div');
+      notif.id = 'dias-esp-notif';
+      notif.style.cssText = 'background:var(--blue-pale);border:1px solid rgba(26,79,138,.15);border-radius:10px;padding:12px 14px;margin:0 16px 12px;display:flex;gap:10px;align-items:flex-start;';
+      notif.innerHTML = `<span style="font-size:18px;flex-shrink:0;">👥</span><div><div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:2px;">Atención conjunta este día</div><div style="font-size:11px;color:var(--text-mid);">Trabaja junto con <strong>${match.nombre}</strong> — ${match.especialidad}${match.nota ? '. ' + match.nota : ''}.</div></div>`;
+      slotsWrap.insertAdjacentElement('beforebegin', notif);
+    }
+  }
+}
+
+let franjaRowCount = 1;
+
+function addFranjaRow() {
+  const container = document.getElementById('franjas-rows');
+  const idx = franjaRowCount;
+  const row = document.createElement('div');
+  row.className = 'franja-row';
+  row.id = 'franja-row-' + idx;
+  row.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;">Franja ${idx + 1}</span>
+      <button class="franja-row-del" onclick="removeFranjaRow(${idx})">✕</button>
+    </div>
+    <div class="disp-grid-2" style="margin-bottom:8px;">
+      <div>
+        <label class="form-label">Desde</label>
+        <input class="form-input franja-desde" type="time" value="15:30">
+      </div>
+      <div>
+        <label class="form-label">Hasta</label>
+        <input class="form-input franja-hasta" type="time" value="17:00">
+      </div>
+    </div>
+    <div class="disp-mb">
+      <input class="form-input franja-motivo" type="text" placeholder="Motivo (opcional)">
+    </div>`;
+  container.appendChild(row);
+  franjaRowCount++;
+  // Actualizar labels de numeración
+  updateFranjaLabels();
+}
+
+function removeFranjaRow(idx) {
+  const row = document.getElementById('franja-row-' + idx);
+  if (row) row.remove();
+  updateFranjaLabels();
+}
+
+function updateFranjaLabels() {
+  const rows = document.querySelectorAll('.franja-row');
+  rows.forEach((row, i) => {
+    const label = row.querySelector('span');
+    if (label) label.textContent = 'Franja ' + (i + 1);
+  });
+}
+
+function agregarFranjas() {
+  const fecha = document.getElementById('franja-fecha').value;
+  if (!fecha) { showToast('Seleccioná una fecha.'); return; }
+
+  const rows = document.querySelectorAll('.franja-row');
   const arr = getFranjas();
-  arr.push({ fecha, desde, hasta, motivo });
+  let agregadas = 0;
+  let errores = [];
+
+  rows.forEach((row, i) => {
+    const desde  = row.querySelector('.franja-desde').value;
+    const hasta  = row.querySelector('.franja-hasta').value;
+    const motivo = row.querySelector('.franja-motivo').value.trim();
+    if (!desde || !hasta) { errores.push('Franja ' + (i+1) + ': completá horario'); return; }
+    if (hasta <= desde)   { errores.push('Franja ' + (i+1) + ': "hasta" debe ser mayor a "desde"'); return; }
+    arr.push({ fecha, desde, hasta, motivo });
+    agregadas++;
+  });
+
+  if (errores.length) { showToast(errores[0]); return; }
+  if (!agregadas) { showToast('No hay franjas válidas para guardar.'); return; }
+
   saveFranjas(arr);
-  document.getElementById('franja-fecha').value  = '';
-  document.getElementById('franja-motivo').value = '';
+
+  // Reset form — dejar solo fila 1
+  document.getElementById('franja-fecha').value = '';
+  const container = document.getElementById('franjas-rows');
+  container.innerHTML = `
+    <div class="franja-row" id="franja-row-0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;">Franja 1</span>
+      </div>
+      <div class="disp-grid-2" style="margin-bottom:8px;">
+        <div><label class="form-label">Desde</label><input class="form-input franja-desde" type="time" value="09:00"></div>
+        <div><label class="form-label">Hasta</label><input class="form-input franja-hasta" type="time" value="10:00"></div>
+      </div>
+      <div class="disp-mb"><input class="form-input franja-motivo" type="text" placeholder="Motivo (opcional)"></div>
+    </div>`;
+  franjaRowCount = 1;
+
   renderFranjas();
-  showToast('✓ Franja bloqueada', 'info');
+  showToast('✓ ' + agregadas + ' franja' + (agregadas > 1 ? 's' : '') + ' bloqueada' + (agregadas > 1 ? 's' : ''), 'info');
 }
 
 function eliminarFranja(i) {
@@ -1285,6 +1560,40 @@ async function confirmBooking() {
       document.getElementById('success-card').classList.add('visible');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       await loadTurnosMes();
+
+      // Generar link WhatsApp confirmación al profesional
+      try {
+        const telProf = '5493834007226'; // WhatsApp Dr. Jiménez
+        const fechaWA = selDate.toLocaleDateString('es-AR', { weekday:'long', day:'numeric', month:'long' });
+        const fechaCap = fechaWA.charAt(0).toUpperCase() + fechaWA.slice(1);
+        const msgWA = '¡Hola Dr. Jiménez! Confirmé mi turno a través de Agendado.\n\n' +
+          '👤 Nombre: ' + nombre + '\n' +
+          '📅 Fecha: ' + fechaCap + '\n' +
+          '⏰ Horario: ' + selSlot + ' hs (' + selDur + ' min)\n' +
+          (email ? '✉️ Email: ' + email + '\n' : '') +
+          '\n¡Hasta pronto!';
+        const btnWA = document.getElementById('btn-wpp-confirm');
+        if (btnWA) btnWA.href = 'https://wa.me/' + telProf + '?text=' + encodeURIComponent(msgWA);
+      } catch(e) { console.warn('WA link error:', e); }
+
+      // Generar link Google Calendar
+      try {
+        const gcalBase = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
+        const fechaGcal = selDate.toISOString().split('T')[0].replace(/-/g,'');
+        // Calcular hora fin
+        const [hh, mm] = selSlot.split(':').map(Number);
+        const totalMin = hh * 60 + mm + selDur;
+        const hFin = String(Math.floor(totalMin / 60)).padStart(2,'0');
+        const mFin = String(totalMin % 60).padStart(2,'0');
+        const gcalStart = fechaGcal + 'T' + selSlot.replace(':','') + '00';
+        const gcalEnd   = fechaGcal + 'T' + hFin + mFin + '00';
+        const gcalTitle = encodeURIComponent('Turno con Dr. José María Jiménez');
+        const gcalLoc   = encodeURIComponent('Consultorios LIBERTAD, Libertad 122, Tucumán');
+        const gcalDesc  = encodeURIComponent('Turno reservado a través de Agendado.link\nContacto: +54 9 383 400-7226');
+        const gcalUrl = gcalBase + '&text=' + gcalTitle + '&dates=' + gcalStart + '/' + gcalEnd + '&location=' + gcalLoc + '&details=' + gcalDesc;
+        const btnGcal = document.getElementById('btn-gcal');
+        if (btnGcal) btnGcal.href = gcalUrl;
+      } catch(e) { console.warn('GCal link error:', e); }
     } else {
       throw new Error('Respuesta inesperada de Supabase');
     }
@@ -1315,6 +1624,9 @@ function resetFlow() {
 function activarPanel() {
   document.getElementById('panel-login').style.display = 'none';
   document.getElementById('panel-inner').style.display = 'block';
+  // Mostrar nombre en header panel
+  const profNameEl = document.getElementById('panel-prof-name');
+  if (profNameEl) profNameEl.style.display = 'block';
   panelYear = today.getFullYear();
   panelMonth = today.getMonth();
   panelSelDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -1462,8 +1774,9 @@ function renderPanelMonthGrid() {
       var btn = document.createElement('button');
       btn.type = 'button';
 
-      var bg = isSelected ? 'var(--blue)' : hasTurnos && !isPast ? 'var(--blue-pale)' : 'var(--white)';
-      var border = isSelected ? 'var(--blue)' : hasTurnos && !isPast ? 'rgba(26,79,138,.25)' : 'var(--border)';
+      var isFeriadoPanel = esFeriado(dateStr);
+      var bg = isSelected ? 'var(--blue)' : hasTurnos && !isPast ? 'var(--blue-pale)' : isFeriadoPanel && !isPast ? 'var(--rose-pale)' : 'var(--white)';
+      var border = isSelected ? 'var(--blue)' : hasTurnos && !isPast ? 'rgba(26,79,138,.25)' : isFeriadoPanel && !isPast ? 'rgba(225,29,72,.2)' : 'var(--border)';
 
       btn.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 2px;border-radius:10px;border:1.5px solid ' + border + ';background:' + bg + ';cursor:pointer;transition:all .2s;min-height:56px;width:100%';
 
@@ -1478,6 +1791,14 @@ function renderPanelMonthGrid() {
         var dot = document.createElement('span');
         dot.style.cssText = 'width:5px;height:5px;border-radius:50%;background:var(--teal);';
         btn.appendChild(dot);
+      }
+
+      // Feriado badge
+      if (isFeriadoPanel && !isPast && !isSelected) {
+        var fBadge = document.createElement('span');
+        fBadge.style.cssText = 'font-size:8px;font-weight:800;border-radius:6px;padding:1px 4px;line-height:1.4;background:var(--rose);color:white;letter-spacing:.3px;';
+        fBadge.textContent = 'Fer.';
+        btn.appendChild(fBadge);
       }
 
       // Turno badge
@@ -1814,7 +2135,7 @@ async function guardarNuevoTurno() {
       var telLimpio = tel.replace(/[^0-9]/g, '');
       if (!telLimpio.startsWith('54')) telLimpio = '54' + telLimpio;
       var fechaLabel = (panelSelDate || new Date()).toLocaleDateString('es-AR', { weekday:'long', day:'numeric', month:'long' });
-      var waMsg = '¡Hola ' + nombre + '! Tu turno con el Dr. Jiménez quedó confirmado.\n\n📅 ' + fechaLabel + '\n⏰ ' + hora + ' hs (' + dur + ' min)\n📍 Consultorios LIBERTAD, Libertad 122, Tucumán\n\nTe recordaremos 24hs antes. ¡Nos vemos!';
+      var waMsg = '¡Hola ' + nombre + '! Tu turno con el Dr. Jiménez quedó confirmado.\n\n📅 ' + fechaLabel + '\n⏰ ' + hora + ' hs (' + dur + ' min)\n📍 Consultorios LIBERTAD, Libertad 122, Tucumán\n\n¡Nos vemos!';
       var waUrl = 'https://wa.me/' + telLimpio + '?text=' + encodeURIComponent(waMsg);
       setTimeout(function() { window.open(waUrl, '_blank'); }, 800);
 
