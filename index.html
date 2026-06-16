@@ -377,6 +377,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
 .dias-esp-del:hover{color:var(--rose);background:var(--rose-pale);}
 .dias-esp-empty{font-size:12px;color:var(--text-dim);text-align:center;padding:16px;font-style:italic;}
 
+
+/* ── WA OBLIGATORIO ── */
+.wpp-step{background:linear-gradient(135deg,rgba(37,211,102,.08),rgba(37,211,102,.04));border:1.5px solid rgba(37,211,102,.3);border-radius:14px;padding:18px 16px;margin-bottom:14px;text-align:center;}
+.wpp-step-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#128C7E;margin-bottom:6px;}
+.wpp-step-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.4;}
+.wpp-step-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:#25D366;color:white;border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 4px 16px rgba(37,211,102,.35);transition:all .2s;}
+.wpp-step-btn:hover{background:#128C7E;transform:translateY(-1px);}
+.wpp-step-skip{font-size:11px;color:var(--text-dim);margin-top:10px;cursor:pointer;text-decoration:underline;display:block;}
+
+
+/* ── MODAL EDITAR TURNO ── */
+.btn-action.edit{border-color:rgba(26,79,138,.2);color:var(--blue);}
+.btn-action.edit:hover{background:var(--blue-pale);}
+
 </style>
 </head>
 <body>
@@ -534,24 +548,32 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
     </div>
 
     <div class="success-card" id="success-card">
+      <!-- Ícono y título -->
       <div class="success-icon-wrap">✓</div>
-      <h3>¡Turno confirmado!</h3>
+      <h3>¡Turno registrado!</h3>
       <p id="success-name-msg" style="margin-top:6px;font-size:15px;color:var(--text)"></p>
       <div class="success-detail" id="success-detail"></div>
-      <div class="notif-badge">
-        <span style="font-size:18px;flex-shrink:0">🔔</span>
-        <div class="nb-text">Tu turno quedó registrado. Agregalo a tu Google Calendar para no olvidarlo.</div>
+
+      <!-- PASO OBLIGATORIO: WA -->
+      <div class="wpp-step">
+        <div class="wpp-step-label">📋 Paso final</div>
+        <div class="wpp-step-title">Enviá este mensaje al Dr. Jiménez para completar tu reserva</div>
+        <a id="btn-wpp-confirm" href="#" target="_blank" class="wpp-step-btn" onclick="onWppSent()">
+          <span style="font-size:20px;">💬</span> Confirmar por WhatsApp
+        </a>
       </div>
-      <a id="btn-wpp-confirm" href="#" target="_blank"
-        style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#25D366;color:white;border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 12px rgba(37,211,102,.3);">
-        <span style="font-size:18px;">💬</span> Enviar confirmación por WhatsApp
-      </a>
-      <!-- Botón Google Calendar -->
+
+      <!-- Google Calendar — secundario -->
       <a id="btn-gcal" href="#" target="_blank"
-        style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#4285F4;color:white;border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 12px rgba(66,133,244,.3);">
-        <span style="font-size:18px;">📅</span> Agregar a Google Calendar
+        style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:var(--blue-pale);color:var(--blue);border:1.5px solid rgba(26,79,138,.2);border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;text-decoration:none;margin-bottom:14px;">
+        <span style="font-size:16px;">📅</span> Agregar a Google Calendar
       </a>
-      <button class="btn-secondary" onclick="resetFlow()">Reservar otro turno</button>
+
+      <!-- Volver — discreto, aparece después de enviar WA -->
+      <div id="btn-reset-wrap" style="display:none;">
+        <button class="btn-secondary" onclick="resetFlow()">Reservar otro turno</button>
+      </div>
+      <p id="skip-wpp" style="font-size:11px;color:var(--text-dim);margin-top:8px;cursor:pointer;text-decoration:underline;" onclick="showReset()">Omitir y volver al inicio</p>
     </div>
   </div>
 
@@ -1879,6 +1901,7 @@ async function renderPanelDay() {
         <div class="turno-actions">
           ${t.estado !== 'confirmado' ? `<button class="btn-action confirm" onclick="cambiarEstado('${t.id}','confirmado')">✓ Confirmar</button>` : ''}
           ${t.estado !== 'cancelado'  ? `<button class="btn-action cancel"  onclick="cambiarEstado('${t.id}','cancelado')">✗ Cancelar</button>`  : ''}
+          <button class="btn-action edit" onclick="abrirEditarTurno('${t.id}','${t.paciente_nombre}','${t.paciente_tel}','${t.fecha}','${t.hora.substring(0,5)}')">✏️ Editar</button>
           <button class="btn-action wpp" onclick="window.open('https://wa.me/${'+'}${t.paciente_tel.replace(/\D/g,'')}','_blank')">💬 WA</button>
         </div>
       </div>`).join('');
@@ -2102,6 +2125,12 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.target === this) cerrarNuevoTurno();
     });
   }
+  var overlayEdit = document.getElementById('modal-editar-turno');
+  if (overlayEdit) {
+    overlayEdit.addEventListener('click', function(e) {
+      if (e.target === this) cerrarEditarTurno();
+    });
+  }
 });
 
 async function guardarNuevoTurno() {
@@ -2237,6 +2266,104 @@ function initFeriados() {
   if (el && val === '0') el.classList.remove('on');
 }
 
+
+// ══════════════════════════════════════
+// WA OBLIGATORIO — control de flujo
+// ══════════════════════════════════════
+function onWppSent() {
+  // Mostrar botón de volver después de tocar WA
+  setTimeout(function() {
+    showReset();
+  }, 1000);
+}
+
+function showReset() {
+  const wrap = document.getElementById('btn-reset-wrap');
+  const skip = document.getElementById('skip-wpp');
+  if (wrap) wrap.style.display = 'block';
+  if (skip) skip.style.display = 'none';
+}
+
+
+// ══════════════════════════════════════
+// EDITAR TURNO
+// ══════════════════════════════════════
+let editTurnoId = null;
+let editTurnoTel = null;
+let editTurnoNombre = null;
+
+function abrirEditarTurno(id, nombre, tel, fecha, hora) {
+  editTurnoId = id;
+  editTurnoTel = tel;
+  editTurnoNombre = nombre;
+
+  // Mostrar datos del paciente (solo lectura)
+  document.getElementById('edit-paciente-label').textContent = 'Modificá fecha u hora del turno';
+  document.getElementById('edit-nombre-display').textContent = nombre;
+  document.getElementById('edit-tel-display').textContent = tel;
+
+  // Pre-cargar fecha y hora actuales
+  document.getElementById('edit-fecha').value = fecha;
+  document.getElementById('edit-hora').value = hora;
+
+  // Min fecha = hoy
+  document.getElementById('edit-fecha').min = new Date().toISOString().split('T')[0];
+
+  document.getElementById('modal-editar-turno').classList.add('open');
+}
+
+function cerrarEditarTurno() {
+  document.getElementById('modal-editar-turno').classList.remove('open');
+  editTurnoId = null;
+  editTurnoTel = null;
+  editTurnoNombre = null;
+}
+
+async function guardarEdicion() {
+  const fecha = document.getElementById('edit-fecha').value;
+  const hora  = document.getElementById('edit-hora').value;
+
+  if (!fecha || !hora) { showToast('Completá fecha y hora.'); return; }
+
+  const btn = document.getElementById('btn-guardar-edicion');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Guardando...';
+
+  try {
+    await sbPatch(`turnos?id=eq.${editTurnoId}`, {
+      fecha: fecha,
+      hora:  hora + ':00'
+    });
+
+    // Actualizar vista
+    await renderPanelDay();
+    await loadPanelStats();
+    cerrarEditarTurno();
+    showToast('✓ Turno actualizado', 'info');
+
+    // Abrir WA con mensaje de reprogramación
+    const telLimpio = editTurnoTel.replace(/[^0-9]/g, '');
+    const fechaLabel = new Date(fecha + 'T12:00:00').toLocaleDateString('es-AR', {
+      weekday: 'long', day: 'numeric', month: 'long'
+    });
+    const fechaCap = fechaLabel.charAt(0).toUpperCase() + fechaLabel.slice(1);
+    const msgReprog = '¡Hola ' + editTurnoNombre + '! Te informamos que tu turno fue reprogramado.\n\n' +
+      '📅 Nueva fecha: ' + fechaCap + '\n' +
+      '⏰ Nuevo horario: ' + hora + ' hs\n' +
+      '📍 Consultorios LIBERTAD, Libertad 122, Tucumán\n\n' +
+      'Ante cualquier consulta escribinos por WhatsApp. ¡Hasta pronto!';
+    const waUrl = 'https://wa.me/' + telLimpio + '?text=' + encodeURIComponent(msgReprog);
+    setTimeout(function() { window.open(waUrl, '_blank'); }, 600);
+
+  } catch(e) {
+    showToast('Error al actualizar el turno. Intentá de nuevo.');
+    console.error(e);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Guardar cambios →';
+}
+
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', () => {
   renderCalendar();
@@ -2309,5 +2436,37 @@ if ('serviceWorker' in navigator) {
     </button>
   </div>
 </div>
+
+<!-- ── MODAL EDITAR TURNO ── -->
+<div class="modal-overlay" id="modal-editar-turno">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="cerrarEditarTurno()">✕</button>
+    <h3 class="modal-title">Editar turno</h3>
+    <p class="modal-sub" id="edit-paciente-label">Cargando...</p>
+
+    <!-- Datos paciente — solo lectura -->
+    <div style="background:var(--snow);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">Paciente</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;" id="edit-nombre-display">—</div>
+      <div style="font-size:12px;color:var(--text-mid);font-family:'DM Mono',monospace;" id="edit-tel-display">—</div>
+    </div>
+
+    <!-- Fecha y hora editables -->
+    <div class="form-group">
+      <label class="form-label">Nueva fecha <span style="color:var(--rose)">*</span></label>
+      <input class="form-input" type="date" id="edit-fecha">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nueva hora <span style="color:var(--rose)">*</span></label>
+      <input class="form-input" type="time" id="edit-hora">
+    </div>
+
+    <button class="btn-confirm" id="btn-guardar-edicion" onclick="guardarEdicion()">
+      Guardar cambios →
+    </button>
+  </div>
+</div>
+
 </body>
 </html>
