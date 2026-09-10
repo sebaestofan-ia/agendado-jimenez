@@ -391,6 +391,16 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
 .btn-action.edit{border-color:rgba(26,79,138,.2);color:var(--blue);}
 .btn-action.edit:hover{background:var(--blue-pale);}
 
+
+/* ── BLOQUEO RECURRENTE ── */
+.recur-item{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+.recur-day-badge{min-width:40px;height:40px;border-radius:8px;background:var(--rose-pale);border:1px solid rgba(225,29,72,.2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--rose);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
+.recur-info{flex:1;}
+.recur-label{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.recur-detail{font-size:11px;color:var(--text-dim);}
+.recur-del{background:none;border:none;color:var(--text-xdim);font-size:14px;cursor:pointer;padding:4px 8px;border-radius:6px;flex-shrink:0;}
+.recur-del:hover{color:var(--rose);background:var(--rose-pale);}
+
 </style>
 </head>
 <body>
@@ -430,7 +440,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
       <input type="file" id="avatar-input" accept="image/*" onchange="handleAvatar(event)">
     </div>
     <div style="text-align:center;opacity:0;animation:fadeUp .4s .05s ease forwards">
-      <div class="hero-badge">🦷 Odontología · Ortodoncia</div>
+      <div class="hero-badge">🦴 Ortodoncia Dedicación Exclusiva</div>
     </div>
     <h1 class="hero-name">Dr. José María Jiménez</h1>
     <div class="hero-spec" id="hero-spec-chips">
@@ -589,8 +599,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
       <a class="contact-item" href="https://wa.me/5493834007226" target="_blank">
         <div class="ci-icon">💬</div><div class="ci-info"><div class="ci-label">WhatsApp</div><div class="ci-value">+54 9 383 400-7226</div></div><span class="ci-arrow">›</span>
       </a>
-      <a class="contact-item" href="mailto:jose_j7@hotmail.com">
-        <div class="ci-icon">✉️</div><div class="ci-info"><div class="ci-label">Email</div><div class="ci-value">jose_j7@hotmail.com</div></div><span class="ci-arrow">›</span>
+      <a class="contact-item" href="mailto:consultorioslibertad@gmail.com">
+        <div class="ci-icon">✉️</div><div class="ci-info"><div class="ci-label">Email</div><div class="ci-value">consultorioslibertad@gmail.com</div></div><span class="ci-arrow">›</span>
       </a>
       <a class="contact-item" href="https://maps.google.com/?q=Libertad+122+San+Miguel+de+Tucuman" target="_blank">
         <div class="ci-icon">📍</div><div class="ci-info"><div class="ci-label">Consultorio</div><div class="ci-value">Libertad 122 · Consultorios LIBERTAD · Tucumán</div></div><span class="ci-arrow">›</span>
@@ -607,7 +617,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
   <div id="sec-info" class="section">
     <p class="sec-eyebrow">Información</p>
     <h2 class="sec-title">El consultorio</h2>
-    <p class="sec-sub">Clínica Consultorios LIBERTAD · Tucumán</p>
+    <p class="sec-sub">Consultorios LIBERTAD · Tucumán</p>
     <div class="info-block">
       <h3>Dr. José María Jiménez</h3>
       <p>Odontólogo egresado de la Universidad Nacional de Tucumán (2010). Especialista en Ortodoncia, egresado de la Universidad Maimónides (2022). Dedicación exclusiva a ortodoncia.</p>
@@ -786,7 +796,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
 
           <div class="form-group">
             <label class="form-label">Email <span style="color:var(--rose)">*</span></label>
-            <input class="form-input" id="cfg-email" type="email" placeholder="jose_j7@hotmail.com">
+            <input class="form-input" id="cfg-email" type="email" placeholder="tu@email.com">
           </div>
 
           <div class="form-group" style="margin-bottom:0">
@@ -913,6 +923,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
         <div class="disp-tabs">
           <button class="disp-tab active" onclick="switchDispTab('dias',this)">🚫 Días completos</button>
           <button class="disp-tab" onclick="switchDispTab('franjas',this)">⏰ Franjas horarias</button>
+          <button class="disp-tab" onclick="switchDispTab('recurrente',this)">🔁 Recurrente</button>
         </div>
 
         <!-- Panel: Días completos -->
@@ -950,20 +961,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
               <input class="form-input" id="franja-fecha" type="date">
             </div>
 
-            <!-- Accesos rápidos mañana/tarde -->
-            <div style="display:flex;gap:8px;margin-bottom:12px;">
-              <button onclick="bloqueoRapido('manana')"
-                style="flex:1;padding:9px 6px;border:1.5px solid rgba(217,119,6,.3);border-radius:10px;background:rgba(217,119,6,.07);color:var(--amber);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;"
-                onmouseover="this.style.background='rgba(217,119,6,.14)'" onmouseout="this.style.background='rgba(217,119,6,.07)'">
-                🌅 Bloquear mañana completa
-              </button>
-              <button onclick="bloqueoRapido('tarde')"
-                style="flex:1;padding:9px 6px;border:1.5px solid rgba(26,79,138,.2);border-radius:10px;background:var(--blue-pale);color:var(--blue);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;"
-                onmouseover="this.style.background='rgba(26,79,138,.12)'" onmouseout="this.style.background='var(--blue-pale)'">
-                🌆 Bloquear tarde completa
-              </button>
-            </div>
-
             <!-- Contenedor de franjas dinámicas -->
             <div id="franjas-rows">
               <!-- Fila 1 (siempre visible) -->
@@ -996,6 +993,34 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
           </div>
         </div>
       </div>
+        <!-- Panel: Recurrente -->
+        <div class="disp-panel" id="disp-panel-recurrente">
+          <div id="disp-recurrente-list" style="margin-bottom:12px;"></div>
+          <div class="disp-form">
+            <div class="disp-form-title">🔁 Bloquear día de semana recurrente</div>
+            <p style="font-size:11px;color:var(--text-mid);margin-bottom:10px;line-height:1.5;">Bloqueá todos los días de la semana que elijas. Por ejemplo: todos los lunes.</p>
+            <div class="disp-mb">
+              <label class="form-label">Día de la semana</label>
+              <select class="form-input" id="recur-dia" style="background:var(--snow)">
+                <option value="lun">Lunes</option>
+                <option value="mar">Martes</option>
+                <option value="mie">Miércoles</option>
+                <option value="jue">Jueves</option>
+                <option value="vie">Viernes</option>
+                <option value="sab">Sábado</option>
+                <option value="dom">Domingo</option>
+              </select>
+            </div>
+            <div class="disp-mb">
+              <label class="form-label">Motivo <span style="font-weight:400;font-style:italic;color:var(--text-dim)">(opcional)</span></label>
+              <input class="form-input" id="recur-motivo" type="text" placeholder="Ej: Guardia hospitalaria">
+            </div>
+            <button class="btn-bloquear-dia" onclick="agregarBloqueoRecurrente()" style="background:var(--rose);">
+              🔁 Bloquear este día de semana
+            </button>
+          </div>
+        </div>
+
 
 
     </div>
@@ -1303,7 +1328,7 @@ function getBloqueos() {
 function saveBloqueos(arr) { localStorage.setItem('agendado_bloqueos', JSON.stringify(arr)); }
 
 function esDiaBloqueado(fechaStr) {
-  return esFeriado(fechaStr) || getBloqueos().some(b => fechaStr >= b.desde && fechaStr <= b.hasta);
+  return esFeriado(fechaStr) || esDiaRecurrenteBloqueado(fechaStr) || getBloqueos().some(b => fechaStr >= b.desde && fechaStr <= b.hasta);
 }
 
 function renderBloqueos() {
@@ -1451,36 +1476,6 @@ function checkDiaEspecial(fecha) {
       slotsWrap.insertAdjacentElement('beforebegin', notif);
     }
   }
-}
-
-
-// ══════════════════════════════════════
-// BLOQUEO RÁPIDO MAÑANA / TARDE
-// ══════════════════════════════════════
-function bloqueoRapido(turno) {
-  const fecha = document.getElementById('franja-fecha').value;
-  if (!fecha) { showToast('Seleccioná primero una fecha.'); return; }
-
-  // Leer horarios configurados o usar defaults
-  const hi1 = localStorage.getItem('agendado_hora_inicio') || '08:30';
-  const hf1 = localStorage.getItem('agendado_hora_fin')    || '13:00';
-  const hi2 = localStorage.getItem('agendado_hora_inicio2') || '15:30';
-  const hf2 = localStorage.getItem('agendado_hora_fin2')    || '20:00';
-
-  const desde  = turno === 'manana' ? hi1 : hi2;
-  const hasta  = turno === 'manana' ? hf1 : hf2;
-  const motivo = turno === 'manana' ? 'Mañana bloqueada' : 'Tarde bloqueada';
-  const label  = turno === 'manana' ? '🌅 mañana' : '🌆 tarde';
-
-  const arr = getFranjas();
-  // Verificar que no esté ya bloqueada esa franja ese día
-  const yaExiste = arr.some(f => f.fecha === fecha && f.desde === desde && f.hasta === hasta);
-  if (yaExiste) { showToast('Esa franja ya está bloqueada para esa fecha.'); return; }
-
-  arr.push({ fecha, desde, hasta, motivo });
-  saveFranjas(arr);
-  renderFranjas();
-  showToast('✓ ' + label + ' bloqueada (' + desde + ' – ' + hasta + ')', 'info');
 }
 
 let franjaRowCount = 1;
@@ -1695,18 +1690,16 @@ function resetFlow() {
 // ══════════════════════════════════════
 // PANEL MÉDICO
 // ══════════════════════════════════════
-function activarPanel() {
+async function activarPanel() {
   document.getElementById('panel-login').style.display = 'none';
   document.getElementById('panel-inner').style.display = 'block';
-  // Mostrar nombre en header panel
   const profNameEl = document.getElementById('panel-prof-name');
   if (profNameEl) profNameEl.style.display = 'block';
   panelYear = today.getFullYear();
   panelMonth = today.getMonth();
   panelSelDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  renderPanelMonthGrid();
-  loadTurnosMes_panel();
-  renderPanelDay();
+  await loadTurnosMes_panel();
+  await renderPanelDay();
   loadPacientes();
   loadPanelStats();
 }
@@ -1783,12 +1776,11 @@ let turnosPorDia = {};
 
 const panelMonthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-function changePanelMonth(dir) {
+async function changePanelMonth(dir) {
   panelMonth += dir;
   if (panelMonth < 0) { panelMonth = 11; panelYear--; }
   if (panelMonth > 11) { panelMonth = 0; panelYear++; }
-  renderPanelMonthGrid();
-  loadTurnosMes_panel();
+  await loadTurnosMes_panel();
 }
 
 function goToToday() {
@@ -2190,10 +2182,15 @@ async function guardarNuevoTurno() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>Guardando...';
 
-  try {
-    const d = panelSelDate || new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const fechaStr = d.toISOString().split('T')[0];
+  // Capturar fecha ANTES de cerrar el modal
+  const d = panelSelDate || new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const fechaStr = d.toISOString().split('T')[0];
+  const fechaSnap = new Date(fechaStr + 'T12:00:00');
+  const fechaLabel = fechaSnap.toLocaleDateString('es-AR', { weekday:'long', day:'numeric', month:'long' });
+  const fechaCap = fechaLabel.charAt(0).toUpperCase() + fechaLabel.slice(1);
+  const motivoTxt = motivo !== 'Sin especificar' ? '\n📋 Motivo: ' + motivo : '';
 
+  try {
     const result = await sbPost('turnos', {
       profesional_id:  PROFESIONAL_ID,
       paciente_nombre: nombre,
@@ -2203,43 +2200,45 @@ async function guardarNuevoTurno() {
       fecha:    fechaStr,
       hora:     hora + ':00',
       duracion: dur,
-      estado:   'confirmado'   // turno del médico ya confirmado
+      estado:   'confirmado'
     });
 
     if (result && result[0] && result[0].id) {
       cerrarNuevoTurno();
       await renderPanelDay();
+      await loadTurnosMes_panel();
       await loadPanelStats();
       showToast('✓ Turno guardado correctamente', 'info');
 
-      // Capturar todos los valores ANTES de cerrar el modal
-      var telLimpio = tel.replace(/[^0-9]/g, '');
-      if (!telLimpio.startsWith('54')) telLimpio = '54' + telLimpio;
-      var fechaSnap = new Date(fechaStr + 'T12:00:00');
-      var fechaLabel = fechaSnap.toLocaleDateString('es-AR', { weekday:'long', day:'numeric', month:'long' });
-      var fechaCap = fechaLabel.charAt(0).toUpperCase() + fechaLabel.slice(1);
-      var motivoLabel = motivo !== 'Sin especificar' ? '\n📋 Motivo: ' + motivo : '';
-      var waMsg = '¡Hola ' + nombre + '! Tu turno con el Dr. Jiménez quedó confirmado.\n\n📅 ' + fechaCap + '\n⏰ ' + hora + ' hs (' + dur + ' min)\n📍 Consultorios LIBERTAD, Libertad 122, Tucumán' + motivoLabel + '\n\n¡Nos vemos!';
-      var waUrl = 'https://wa.me/' + telLimpio + '?text=' + encodeURIComponent(waMsg);
-      // Generar link Google Calendar para el turno asignado por el panel
+      // Generar link Google Calendar con recordatorio 24hs
+      var gcalUrl2 = '';
       try {
-        var gcalBase2 = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
         var fechaGcal2 = fechaStr.replace(/-/g,'');
         var hh2 = parseInt(hora.split(':')[0]);
         var mm2 = parseInt(hora.split(':')[1]);
         var totalMin2 = hh2 * 60 + mm2 + dur;
         var hFin2 = String(Math.floor(totalMin2/60)).padStart(2,'0');
         var mFin2 = String(totalMin2%60).padStart(2,'0');
-        var gcalUrl2 = gcalBase2 +
+        gcalUrl2 = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
           '&text=' + encodeURIComponent('Turno con Dr. Jiménez') +
-          '&dates=' + fechaGcal2 + 'T' + hora.replace(':','') + '00/' + fechaGcal2 + 'T' + hFin2 + mFin2 + '00' +
+          '&dates=' + fechaGcal2 + 'T' + hora.replace(':','') + '00/' +
+                      fechaGcal2 + 'T' + hFin2 + mFin2 + '00' +
           '&location=' + encodeURIComponent('Consultorios LIBERTAD, Libertad 122, Tucumán') +
           '&details=' + encodeURIComponent('Turno asignado por el Dr. Jiménez\nContacto: +54 9 383 400-7226') +
           '&crm=POPUP&crm_minutes=1440';
-        waMsg += '\n\n📅 Agregá el turno a tu Google Calendar:\n' + gcalUrl2;
-        waUrl = 'https://wa.me/' + telLimpio + '?text=' + encodeURIComponent(waMsg);
-      } catch(e2) { console.warn('GCal panel error:', e2); }
+      } catch(ge) { console.warn('GCal error:', ge); }
 
+      // Abrir WhatsApp con todos los datos + link GCal
+      var telLimpio = tel.replace(/[^0-9]/g, '');
+      if (!telLimpio.startsWith('54')) telLimpio = '54' + telLimpio;
+      var waMsg = '¡Hola ' + nombre + '! Tu turno con el Dr. Jiménez quedó confirmado.' +
+        '\n\n📅 ' + fechaCap +
+        '\n⏰ ' + hora + ' hs (' + dur + ' min)' +
+        '\n📍 Consultorios LIBERTAD, Libertad 122, Tucumán' +
+        motivoTxt +
+        (gcalUrl2 ? '\n\n📅 Agregalo a tu Google Calendar:\n' + gcalUrl2 : '') +
+        '\n\n¡Nos vemos!';
+      var waUrl = 'https://wa.me/' + telLimpio + '?text=' + encodeURIComponent(waMsg);
       setTimeout(function() { window.open(waUrl, '_blank'); }, 800);
 
     } else {
@@ -2423,6 +2422,70 @@ async function guardarEdicion() {
 
   btn.disabled = false;
   btn.textContent = 'Guardar cambios →';
+}
+
+
+// ══════════════════════════════════════
+// BLOQUEO RECURRENTE POR DÍA DE SEMANA
+// ══════════════════════════════════════
+const DIAS_SEMANA_MAP = { lun:1, mar:2, mie:3, jue:4, vie:5, sab:6, dom:0 };
+const DIAS_SEMANA_LABEL = { lun:'Lunes', mar:'Martes', mie:'Miércoles', jue:'Jueves', vie:'Viernes', sab:'Sábado', dom:'Domingo' };
+
+function getBloqueoRecurrente() {
+  try { return JSON.parse(localStorage.getItem('agendado_bloqueos_recurrentes') || '[]'); } catch(e) { return []; }
+}
+function saveBloqueoRecurrente(arr) {
+  localStorage.setItem('agendado_bloqueos_recurrentes', JSON.stringify(arr));
+}
+
+function esDiaRecurrenteBloqueado(fechaStr) {
+  const dow = new Date(fechaStr + 'T12:00:00').getDay(); // 0=dom, 1=lun...
+  const diasKeys = Object.keys(DIAS_SEMANA_MAP);
+  const dowKey = diasKeys.find(k => DIAS_SEMANA_MAP[k] === dow);
+  return getBloqueoRecurrente().some(b => b.dia === dowKey);
+}
+
+function renderBloqueoRecurrente() {
+  const list = document.getElementById('disp-recurrente-list');
+  if (!list) return;
+  const arr = getBloqueoRecurrente();
+  if (!arr.length) {
+    list.innerHTML = '<div class="disp-empty">Sin bloqueos recurrentes.</div>';
+    return;
+  }
+  list.innerHTML = arr.map((b, i) => `
+    <div class="recur-item">
+      <div class="recur-day-badge">${DIAS_SEMANA_LABEL[b.dia] ? DIAS_SEMANA_LABEL[b.dia].substring(0,3).toUpperCase() : b.dia}</div>
+      <div class="recur-info">
+        <div class="recur-label">Todos los ${DIAS_SEMANA_LABEL[b.dia] || b.dia}</div>
+        ${b.motivo ? `<div class="recur-detail">${b.motivo}</div>` : ''}
+      </div>
+      <button class="recur-del" onclick="eliminarBloqueoRecurrente(${i})">✕</button>
+    </div>`).join('');
+}
+
+function agregarBloqueoRecurrente() {
+  const dia    = document.getElementById('recur-dia').value;
+  const motivo = document.getElementById('recur-motivo').value.trim();
+  const arr = getBloqueoRecurrente();
+  if (arr.some(b => b.dia === dia)) {
+    showToast('Los ' + DIAS_SEMANA_LABEL[dia] + ' ya están bloqueados.'); return;
+  }
+  arr.push({ dia, motivo });
+  saveBloqueoRecurrente(arr);
+  document.getElementById('recur-motivo').value = '';
+  renderBloqueoRecurrente();
+  renderCalendar();
+  showToast('✓ Todos los ' + DIAS_SEMANA_LABEL[dia] + ' bloqueados', 'info');
+}
+
+function eliminarBloqueoRecurrente(i) {
+  const arr = getBloqueoRecurrente();
+  arr.splice(i, 1);
+  saveBloqueoRecurrente(arr);
+  renderBloqueoRecurrente();
+  renderCalendar();
+  showToast('✓ Bloqueo recurrente eliminado', 'info');
 }
 
 // ══ INIT ══
