@@ -1057,14 +1057,21 @@ let PROFESIONAL_ID = null;
 
 async function sbGet(path) {
   const r = await fetch(`${SB_URL}/rest/v1/${path}`, { headers: HEADERS });
-  return r.json();
+  if (!r.ok) throw new Error('sbGet error ' + r.status);
+  const text = await r.text();
+  return text ? JSON.parse(text) : [];
 }
 
 async function sbPost(path, body) {
   const r = await fetch(`${SB_URL}/rest/v1/${path}`, {
     method: 'POST', headers: HEADERS, body: JSON.stringify(body)
   });
-  return r.json();
+  if (!r.ok) {
+    const errText = await r.text();
+    throw new Error('sbPost error ' + r.status + ': ' + errText);
+  }
+  const text = await r.text();
+  return text ? JSON.parse(text) : [];
 }
 
 async function sbPatch(path, body) {
@@ -1072,7 +1079,12 @@ async function sbPatch(path, body) {
     method: 'PATCH', headers: { ...HEADERS, 'Prefer': 'return=representation' },
     body: JSON.stringify(body)
   });
-  return r.json();
+  if (!r.ok) {
+    const errText = await r.text();
+    throw new Error('sbPatch error ' + r.status + ': ' + errText);
+  }
+  const text = await r.text();
+  return text ? JSON.parse(text) : [];
 }
 
 // Toast
@@ -2100,12 +2112,19 @@ async function loadConfig() {
 }
 
 async function guardarConfig() {
-  if (!PROFESIONAL_ID) { showToast('Sin conexión a la base de datos.'); return; }
+  if (!PROFESIONAL_ID) {
+    showToast('Sin conexión. Intentá salir y volver a entrar al panel.');
+    btn.disabled = false; btn.textContent = 'Guardar cambios'; return;
+  }
   const btn = document.getElementById('btn-guardar-config');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>Guardando...';
 
   const dias = [...document.querySelectorAll('.dia-btn.active')].map(b => b.dataset.dia);
+  if (!dias.length) {
+    showToast('Seleccioná al menos un día de atención.');
+    btn.disabled = false; btn.textContent = 'Guardar cambios'; return;
+  }
   const nombre = document.getElementById('cfg-nombre').value.trim();
   const titulo = document.getElementById('cfg-titulo') ? document.getElementById('cfg-titulo').value.trim() : '';
   const especialidad = document.getElementById('cfg-especialidad').value.trim();
@@ -2163,11 +2182,11 @@ async function guardarConfig() {
     if (heroName) heroName.textContent = nombre;
   } catch(e) {
     showToast('Error al guardar. Intentá de nuevo.');
-    console.error(e);
+    console.error('guardarConfig error:', e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar cambios';
   }
-
-  btn.disabled = false;
-  btn.textContent = 'Guardar cambios';
 }
 
 function actualizarChipsHero(especialidad, matricula, consultorio, otro) {
