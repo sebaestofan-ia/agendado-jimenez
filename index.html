@@ -765,7 +765,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--snow);color:var
 
           <div class="form-group">
             <label class="form-label">Nombre completo <span style="color:var(--rose)">*</span></label>
-            <input class="form-input" id="cfg-nombre" type="text" placeholder="Dr. José María Jiménez">
+            <input class="form-input" id="cfg-nombre" type="text" placeholder="Ej: Dr. José García">
           </div>
 
           <div class="form-group">
@@ -2038,7 +2038,24 @@ function switchPanelTab(id, btn) {
   document.getElementById('ptab-' + id).classList.add('active');
   btn.classList.add('active');
   if (id === 'pacientes') loadPacientes();
-  if (id === 'config') loadConfig();
+  if (id === 'config') {
+    // Pre-cargar nombre desde el hero inmediatamente
+    const heroNameEl = document.querySelector('.hero-name');
+    const cfgNombreEl = document.getElementById('cfg-nombre');
+    if (heroNameEl && cfgNombreEl && !cfgNombreEl.value.trim()) {
+      cfgNombreEl.value = heroNameEl.textContent.trim();
+    }
+    loadConfig();
+    renderDiasEspeciales();
+    renderBloqueos();
+    renderFranjas();
+    renderBloqueoRecurrente();
+    const tsMin = new Date().toISOString().split('T')[0];
+    ['blq-desde','blq-hasta','franja-fecha'].forEach(fid => {
+      const el = document.getElementById(fid);
+      if (el) el.min = tsMin;
+    });
+  }
 }
 
 // ══════════════════════════════════════
@@ -2071,7 +2088,15 @@ async function loadConfig() {
         btn.classList.toggle('active', p.dias_atencion.includes(btn.dataset.dia));
       });
     }
-  } catch(e) { console.error('Error cargando config:', e); }
+  } catch(e) {
+    console.error('Error cargando config:', e);
+    // Fallback: pre-cargar nombre desde hero si Supabase falla
+    const heroEl = document.querySelector('.hero-name');
+    const cfgEl = document.getElementById('cfg-nombre');
+    if (heroEl && cfgEl && !cfgEl.value.trim()) {
+      cfgEl.value = heroEl.textContent.trim();
+    }
+  }
 }
 
 async function guardarConfig() {
@@ -2087,9 +2112,16 @@ async function guardarConfig() {
   const matricula = document.getElementById('cfg-matricula') ? document.getElementById('cfg-matricula').value.trim() : '';
   const otro = document.getElementById('cfg-otro') ? document.getElementById('cfg-otro').value.trim() : '';
 
+  // Si el campo está vacío, intentar usar el nombre del hero como fallback
   if (!nombre) {
-    showToast('El nombre no puede estar vacío.');
-    btn.disabled = false; btn.textContent = 'Guardar cambios'; return;
+    const heroFallback = document.querySelector('.hero-name');
+    if (heroFallback && heroFallback.textContent.trim()) {
+      document.getElementById('cfg-nombre').value = heroFallback.textContent.trim();
+      nombre = heroFallback.textContent.trim();
+    } else {
+      showToast('Por favor ingresá tu nombre antes de guardar.');
+      btn.disabled = false; btn.textContent = 'Guardar cambios'; return;
+    }
   }
 
   // Guardar horario en localStorage para generateSlots
