@@ -2078,12 +2078,35 @@ function toggleDia(btn) {
 }
 
 async function loadConfig() {
+  // Cargar primero desde localStorage (instantáneo)
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+  const lsNombre = localStorage.getItem('agendado_config_nombre');
+  if (lsNombre) {
+    setVal('cfg-nombre', lsNombre);
+    setVal('cfg-titulo', localStorage.getItem('agendado_config_titulo') || '');
+    setVal('cfg-especialidad', localStorage.getItem('agendado_config_especialidad') || '');
+    setVal('cfg-matricula', localStorage.getItem('agendado_config_matricula') || '');
+    setVal('cfg-consultorio', localStorage.getItem('agendado_config_consultorio') || '');
+    setVal('cfg-direccion', localStorage.getItem('agendado_config_direccion') || '');
+    setVal('cfg-telefono', localStorage.getItem('agendado_config_telefono') || '');
+    setVal('cfg-email', localStorage.getItem('agendado_config_email') || '');
+    const diasLS = localStorage.getItem('agendado_dias_atencion');
+    if (diasLS) {
+      try {
+        const diasArr = JSON.parse(diasLS);
+        document.querySelectorAll('.dia-btn').forEach(btn => {
+          btn.classList.toggle('active', diasArr.includes(btn.dataset.dia));
+        });
+      } catch(e) {}
+    }
+  }
+
+  // Luego intentar desde Supabase (puede fallar sin problema)
   if (!PROFESIONAL_ID) return;
   try {
-    const data = await sbGet(`profesionales?id=eq.${PROFESIONAL_ID}&select=*&limit=1`);
+    const data = await sbGet('profesionales?id=eq.' + PROFESIONAL_ID + '&select=*&limit=1');
     if (!data || !data[0]) return;
     const p = data[0];
-    const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
     setVal('cfg-nombre',       p.nombre);
     setVal('cfg-titulo',       p.titulo);
     setVal('cfg-especialidad', p.especialidad);
@@ -2100,9 +2123,18 @@ async function loadConfig() {
         btn.classList.toggle('active', p.dias_atencion.includes(btn.dataset.dia));
       });
     }
+    // Guardar en localStorage para próxima vez
+    localStorage.setItem('agendado_config_nombre', p.nombre || '');
+    localStorage.setItem('agendado_config_titulo', p.titulo || '');
+    localStorage.setItem('agendado_config_especialidad', p.especialidad || '');
+    localStorage.setItem('agendado_config_matricula', p.matricula || '');
+    localStorage.setItem('agendado_config_consultorio', p.consultorio || '');
+    localStorage.setItem('agendado_config_direccion', p.direccion || '');
+    localStorage.setItem('agendado_config_telefono', p.telefono || '');
+    localStorage.setItem('agendado_config_email', p.email || '');
   } catch(e) {
-    console.error('Error cargando config:', e);
-    // Fallback: pre-cargar nombre desde hero si Supabase falla
+    console.warn('loadConfig Supabase error (usando cache local):', e);
+    // Fallback final: usar nombre del hero
     const heroEl = document.querySelector('.hero-name');
     const cfgEl = document.getElementById('cfg-nombre');
     if (heroEl && cfgEl && !cfgEl.value.trim()) {
@@ -2125,7 +2157,7 @@ async function guardarConfig() {
     showToast('Seleccioná al menos un día de atención.');
     btn.disabled = false; btn.textContent = 'Guardar cambios'; return;
   }
-  const nombre = document.getElementById('cfg-nombre').value.trim();
+  let nombre = document.getElementById('cfg-nombre').value.trim();
   const titulo = document.getElementById('cfg-titulo') ? document.getElementById('cfg-titulo').value.trim() : '';
   const especialidad = document.getElementById('cfg-especialidad').value.trim();
   const matricula = document.getElementById('cfg-matricula') ? document.getElementById('cfg-matricula').value.trim() : '';
@@ -2169,23 +2201,33 @@ async function guardarConfig() {
     dias_atencion:  dias,
   };
 
-  try {
-    await sbPatch(`profesionales?id=eq.${PROFESIONAL_ID}`, payload);
-    showToast('✓ Cambios guardados correctamente', 'info');
-    // Persistir dias de atencion para calendario paciente
-    localStorage.setItem('agendado_dias_atencion', JSON.stringify(dias));
-    renderCalendar();
-    // Actualizar chips del hero en tiempo real
-    actualizarChipsHero(especialidad, matricula, payload.consultorio, otro);
-    // Actualizar nombre en hero
-    const heroName = document.querySelector('.hero-name');
-    if (heroName) heroName.textContent = nombre;
-  } catch(e) {
-    showToast('Error al guardar. Intentá de nuevo.');
-    console.error('guardarConfig error:', e);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Guardar cambios';
+  // Guardar siempre en localStorage primero (funciona offline)
+  localStorage.setItem('agendado_config_nombre', nombre);
+  localStorage.setItem('agendado_config_titulo', titulo);
+  localStorage.setItem('agendado_config_especialidad', especialidad);
+  localStorage.setItem('agendado_config_matricula', matricula);
+  localStorage.setItem('agendado_config_consultorio', payload.consultorio);
+  localStorage.setItem('agendado_config_direccion', payload.direccion);
+  localStorage.setItem('agendado_config_telefono', payload.telefono);
+  localStorage.setItem('agendado_config_email', payload.email);
+  localStorage.setItem('agendado_dias_atencion', JSON.stringify(dias));
+
+  // Actualizar UI inmediatamente
+  actualizarChipsHero(especialidad, matricula, payload.consultorio, otro);
+  const heroName = document.querySelector('.hero-name');
+  if (heroName) heroName.textContent = nombre;
+  renderCalendar();
+
+  // Liberar botón inmediatamente
+  btn.disabled = false;
+  btn.textContent = 'Guardar cambios';
+  showToast('✓ Cambios guardados', 'info');
+
+  // Intentar sincronizar con Supabase en background (no bloquea)
+  if (PROFESIONAL_ID) {
+    sbPatch('profesionales?id=eq.' + PROFESIONAL_ID, payload)
+      .then(function() { console.log('Supabase sync OK'); })
+      .catch(function(e) { console.warn('Supabase sync falló (datos guardados localmente):', e); });
   }
 }
 
